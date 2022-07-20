@@ -2,6 +2,7 @@
   "name": "xpjs-erc20",
   "version": "0.0.1",
   "license": "MIT",
+  "main": "dist/index.js",
   "private": false,
   "dependencies": {
     "bignumber.js": "^9.0.2",
