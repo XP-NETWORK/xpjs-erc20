@@ -1,0 +1,13 @@
+.idea/*
+build
+node_modules
+test
+src/**.js
+coverage
+*.log
+tsconfig.tsbuildinfo
+dist
+src/test.ts
+.env*
+test*
+*.DS_Store

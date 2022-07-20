@@ -1,0 +1,26 @@
+{
+  "name": "xpjs-erc20",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "bignumber.js": "^9.0.2",
+    "crypto-exchange-rate": "git+https://github.com/XP-NETWORK/exchange-rate#5687d35eba73b03a3b29b834107a94646577c8a6",
+    "ethers": "^5.6.9",
+    "web3-erc20-contracts-types": "git+https://github.com/XP-NETWORK/web3-erc20-contracts-types#f61878b6cc361bcce6b1af1918801324d4ebe243"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
+    "@typescript-eslint/parser": "^5.30.7",
+    "eslint": "^8.20.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-functional": "^4.2.1",
+    "husky": "^8.0.1",
+    "typescript": "^4.7.4"
+  }
+}

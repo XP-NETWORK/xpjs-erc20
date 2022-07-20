@@ -1,0 +1,51 @@
+import BigNumber from "bignumber.js";
+
+export type Erc20Utils<T, A, Addr> = {
+  tokenBalance(token: T, address: Addr): Promise<A>;
+};
+
+export type EstimateTxFee<A> = {
+  estimateTransferNative: () => Promise<A>;
+  estimateTransferWrapped: () => Promise<A>;
+};
+
+export type Erc20BridgeChain<S, T, A, Txn> = {
+  preTransfer(sender: S, token: T, amt: A): Promise<Txn | undefined>;
+
+  transferNative(
+    sender: S,
+    nativeToken: T,
+    chainNonce: number,
+    amt: A,
+    txFee: A
+  ): Promise<Txn>;
+
+  transferWrapped(
+    sender: S,
+    wToken: T,
+    chainNonce: number,
+    amt: A,
+    txFee: A
+  ): Promise<Txn>;
+};
+
+export type FullBridgeChain<S, T, A, Txn, Addr> = Erc20BridgeChain<
+  S,
+  T,
+  A,
+  Txn
+> &
+  EstimateTxFee<A> &
+  Erc20Utils<T, A, Addr>;
+
+export type BridgeChainMapper<T, A, Txn, Addr> = {
+  txnToDomain(txn: Txn): string;
+  addrFromDomain(addr: string): Addr;
+  tokenFromDomain(token: string): T;
+  bigNumToDomain(bign: A): BigNumber;
+  bigNumFromDomain(bign: BigNumber): A;
+};
+
+export type BridgeChainFactory<P, S, T, A, Txn, Addr> = (
+  params: P
+) => [FullBridgeChain<S, T, A, Txn, Addr>, BridgeChainMapper<T, A, Txn, Addr>];
