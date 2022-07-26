@@ -1319,9 +1319,9 @@ v8-compile-cache@^2.0.3:
   resolved "https://registry.yarnpkg.com/v8-compile-cache/-/v8-compile-cache-2.3.0.tgz#2de19618c66dc247dcfb6f99338035d8245a2cee"
   integrity sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA==
 
-"web3-erc20-contracts-types@git+https://github.com/XP-NETWORK/web3-erc20-contracts-types#f61878b6cc361bcce6b1af1918801324d4ebe243":
+"web3-erc20-contracts-types@git+https://github.com/XP-NETWORK/web3-erc20-contracts-types#8b5d8f15e2a5a6178ff16ed82ecbbe4977be8cc5":
   version "0.1.0"
-  resolved "git+https://github.com/XP-NETWORK/web3-erc20-contracts-types#f61878b6cc361bcce6b1af1918801324d4ebe243"
+  resolved "git+https://github.com/XP-NETWORK/web3-erc20-contracts-types#8b5d8f15e2a5a6178ff16ed82ecbbe4977be8cc5"
   dependencies:
     ethers "^5.5.2"
 

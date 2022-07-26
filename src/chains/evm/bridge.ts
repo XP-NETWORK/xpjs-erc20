@@ -59,15 +59,15 @@ export function evmBridgeChain(p: EvmParams): EvmBridgeChain {
 
       return await token.approve(bridge.address, amt);
     },
-    transferNative(sender, nativeToken, chainNonce, amt, txFee) {
+    transferNative(sender, nativeToken, chainNonce, amt, to, txFee) {
       return bridge
         .connect(sender)
-        .sendNative(nativeToken.address, amt, chainNonce, { value: txFee });
+        .sendNative(nativeToken.address, amt, chainNonce, to, { value: txFee });
     },
-    transferWrapped(sender, wToken, chainNonce, amt, txFee) {
+    transferWrapped(sender, wToken, chainNonce, amt, to, txFee) {
       return bridge
         .connect(sender)
-        .sendWrapped(wToken.address, amt, chainNonce, { value: txFee });
+        .sendWrapped(wToken.address, amt, chainNonce, to, { value: txFee });
     },
   };
 }

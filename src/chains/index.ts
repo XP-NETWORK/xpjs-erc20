@@ -17,6 +17,7 @@ export type Erc20BridgeChain<S, T, A, Txn> = {
     nativeToken: T,
     chainNonce: number,
     amt: A,
+    to: string,
     txFee: A
   ): Promise<Txn>;
 
@@ -25,6 +26,7 @@ export type Erc20BridgeChain<S, T, A, Txn> = {
     wToken: T,
     chainNonce: number,
     amt: A,
+    to: string,
     txFee: A
   ): Promise<Txn>;
 };

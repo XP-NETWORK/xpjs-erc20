@@ -37,6 +37,7 @@ export type Erc20MultiBridge = {
     token: string,
     chainNonce: R,
     amt: BigNumber,
+    to: string,
     txFee?: BigNumber
   ): Promise<string>;
 };
@@ -110,7 +111,7 @@ export function erc20MultiBridge(
 
       return mapper.txnToDomain(res!);
     },
-    async transferTokens(n, s, t, cn, a, tf) {
+    async transferTokens(n, s, t, cn, a, to, tf) {
       const [chain, mapper] = inner(n);
       const txFee = tf || (await estimateFees(n, t, cn));
 
@@ -121,6 +122,7 @@ export function erc20MultiBridge(
           mapper.tokenFromDomain(t),
           cn,
           mapper.bigNumFromDomain(a),
+          to,
           mapper.bigNumFromDomain(txFee)
         );
       } else {
@@ -129,6 +131,7 @@ export function erc20MultiBridge(
           mapper.tokenFromDomain(t),
           cn,
           mapper.bigNumFromDomain(a),
+          to,
           mapper.bigNumFromDomain(txFee)
         );
       }

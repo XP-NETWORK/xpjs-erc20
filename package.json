@@ -8,7 +8,7 @@
     "bignumber.js": "^9.0.2",
     "crypto-exchange-rate": "git+https://github.com/XP-NETWORK/exchange-rate#5687d35eba73b03a3b29b834107a94646577c8a6",
     "ethers": "^5.6.9",
-    "web3-erc20-contracts-types": "git+https://github.com/XP-NETWORK/web3-erc20-contracts-types#f61878b6cc361bcce6b1af1918801324d4ebe243"
+    "web3-erc20-contracts-types": "git+https://github.com/XP-NETWORK/web3-erc20-contracts-types#8b5d8f15e2a5a6178ff16ed82ecbbe4977be8cc5"
   },
   "scripts": {
     "prepare": "husky install",
