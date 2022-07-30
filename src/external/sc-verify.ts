@@ -16,7 +16,7 @@ type ApiResp<T> = {
 export type ScVerifyRepo = ReturnType<typeof scVerifyRepo>;
 
 function handleScVerifyErr(e: AxiosError) {
-  if (e.code != "404") {
+  if (e.response?.status != 404) {
     console.warn(
       "sc-verify: getWrappedToken: unhandled error",
       e.message,

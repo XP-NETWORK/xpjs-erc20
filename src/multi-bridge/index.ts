@@ -64,7 +64,7 @@ export function erc20MultiBridge(
   }> = {};
   let chainCache: Partial<{
     [K in ChainNonces]: SupBridgeChain<K>;
-  }>;
+  }> = {};
 
   function getChainParams<T extends ChainNonces>(nonce: T): InferParams<T> {
     const params = p[nonce];
@@ -101,6 +101,17 @@ export function erc20MultiBridge(
     return res != undefined;
   }
 
+  function checkDecimals(val: BigNumber, fromC: ChainNonces, toC: ChainNonces) {
+    return val
+      .div(ChainInfo[fromC].decimals)
+      .times(ChainInfo[toC].decimals)
+      .integerValue()
+      .div(ChainInfo[toC].decimals)
+      .times(ChainInfo[fromC].decimals)
+      .eq(val);
+  }
+
+  // TODO: proper impl
   const estimateFees: Erc20MultiBridge["estimateFees"] = async (
     sn,
     token,
@@ -132,6 +143,11 @@ export function erc20MultiBridge(
       return await chain.preTransfer(s, t, a);
     },
     async transferTokens(n, s, t, cn, a, to, tf) {
+      if (!checkDecimals(a, n, cn))
+        throw Error(
+          "Target Chain is not precise enough! round your value to prevent loss"
+        );
+
       const chain = getChain(n);
       const txFee = tf || (await estimateFees(n, t, cn));
 
