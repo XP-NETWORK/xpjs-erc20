@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { SupportedCurrency } from "crypto-exchange-rate";
+import { algoBridgeFactory } from "../chains/algo";
 import { evmBridgeFactory } from "../chains/evm";
 import { ChainMetaMap, ChainNonce, ChainNonces } from "./meta";
 
@@ -13,7 +14,8 @@ type ChainInfo = {
   };
 };
 
-const EVM_DECIMALS = new BigNumber(10).exponentiatedBy(18);
+const EVM_DECIMALS = new BigNumber(1).exponentiatedBy(18);
+const ALGO_DECIMALS = new BigNumber(1e6);
 
 export const ChainInfo: ChainInfo = {
   [ChainNonce.Ethereum]: {
@@ -77,6 +79,22 @@ export const ChainInfo: ChainInfo = {
     decimals: EVM_DECIMALS,
     factory: evmBridgeFactory,
     currency: SupportedCurrency.FTM,
+    // TODO
+    blockExplorer: "",
+  },
+  [ChainNonce.Algorand]: {
+    name: "Algorand",
+    decimals: ALGO_DECIMALS,
+    factory: algoBridgeFactory,
+    currency: SupportedCurrency.ALGO,
+    // TODO
+    blockExplorer: "",
+  },
+  [ChainNonce.AlgorandTestnet]: {
+    name: "Algorand TestNet",
+    decimals: ALGO_DECIMALS,
+    factory: algoBridgeFactory,
+    currency: SupportedCurrency.ALGO,
     // TODO
     blockExplorer: "",
   },

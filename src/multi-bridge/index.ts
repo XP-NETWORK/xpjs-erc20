@@ -1,12 +1,13 @@
 import BigNumber from "bignumber.js";
+import { chainMapCombine, MappedBridgeChain } from "../chains";
 import { ScVerifyRepo } from "../external/sc-verify";
 import { ChainInfo } from "./chain-info";
 import { ChainNonces } from "./meta";
 import {
   InferBridgeChain,
+  InferChainArgs,
   InferChainMeta,
   InferParams,
-  InferSigner,
 } from "./type-utils";
 
 export type Erc20MultiBridge = {
@@ -26,14 +27,14 @@ export type Erc20MultiBridge = {
 
   preTransfer<T extends ChainNonces>(
     nonce: T,
-    sender: InferSigner<T>,
+    sender: InferChainArgs<T>[0],
     token: string,
     amt: BigNumber
   ): Promise<string | undefined>;
 
   transferTokens<T extends ChainNonces, R extends ChainNonces>(
     nonce: T,
-    sender: InferSigner<T>,
+    sender: InferChainArgs<T>[0],
     token: string,
     chainNonce: R,
     amt: BigNumber,
@@ -50,24 +51,49 @@ export type MultiBridgeDeps = {
   scVerify: ScVerifyRepo;
 };
 
+type SupBridgeChain<T extends ChainNonces> = MappedBridgeChain<
+  InferBridgeChain<T>
+>;
+
 export function erc20MultiBridge(
   p: MultiBridgeParams,
   d: MultiBridgeDeps
 ): Erc20MultiBridge {
-  let chainCache: Partial<{
+  let innerCache: Partial<{
     [K in ChainNonces]: InferChainMeta<K>;
   }> = {};
+  let chainCache: Partial<{
+    [K in ChainNonces]: SupBridgeChain<K>;
+  }>;
+
+  function getChainParams<T extends ChainNonces>(nonce: T): InferParams<T> {
+    const params = p[nonce];
+    if (!params) throw Error("chain not enabled!");
+
+    return params;
+  }
 
   function inner<T extends ChainNonces>(nonce: T): InferChainMeta<T> {
-    const cachedChain: InferChainMeta<T> | undefined = chainCache[nonce];
+    const cachedInner = innerCache[nonce];
+    if (cachedInner) return cachedInner! as InferChainMeta<T>;
+
+    const uChain = ChainInfo[nonce].factory(
+      getChainParams(nonce)
+    ) as InferChainMeta<T>;
+    innerCache[nonce] = uChain as any;
+
+    return uChain;
+  }
+
+  function getChain<T extends ChainNonces>(nonce: T): SupBridgeChain<T> {
+    const cachedChain = chainCache[nonce];
     if (cachedChain) return cachedChain!;
 
-    const chainParams = p[nonce];
-    if (!chainParams) throw Error("chain not enabled!");
+    const uChain = inner<T>(nonce);
+    const chain = chainMapCombine(uChain as any);
+    chainCache[nonce] = chain;
 
-    const chain = ChainInfo[nonce].factory(chainParams!);
-
-    return chain as InferChainMeta<T>;
+    return chain;
   }
 
   async function isWrappedToken(chainNonce: number, token: string) {
@@ -80,7 +106,7 @@ export function erc20MultiBridge(
     token,
     tn
   ) => {
-    const [chain, mapper] = inner(tn);
+    const chain = getChain(tn);
     let estimator;
     if (await isWrappedToken(sn, token)) {
       estimator = chain.estimateTransferWrapped;
@@ -88,55 +114,35 @@ export function erc20MultiBridge(
       estimator = chain.estimateTransferNative;
     }
 
-    return mapper.bigNumToDomain(await estimator());
+    return await estimator();
   };
 
   return {
     inner: <T extends ChainNonces>(n: T) => Promise.resolve(inner(n)[0]),
     tokenBalance: async (n, token, addr) => {
-      const [chain, mapper] = inner(n);
-      return mapper.bigNumToDomain(
-        await chain.tokenBalance(mapper.tokenFromDomain(token), addr)
-      );
+      const chain = getChain(n);
+      return await chain.tokenBalance(token, addr);
     },
     estimateFees,
     async preTransfer(n, s, t, a) {
       if (await isWrappedToken(n, t)) return undefined;
 
-      const [chain, mapper] = inner(n);
-      const token = mapper.tokenFromDomain(t);
+      const chain = getChain(n);
 
-      const res = await chain.preTransfer(s, token, mapper.bigNumFromDomain(a));
-      if (!res) return undefined;
-
-      return mapper.txnToDomain(res!);
+      return await chain.preTransfer(s, t, a);
     },
     async transferTokens(n, s, t, cn, a, to, tf) {
-      const [chain, mapper] = inner(n);
+      const chain = getChain(n);
       const txFee = tf || (await estimateFees(n, t, cn));
 
       let res;
       if (await isWrappedToken(n, t)) {
-        res = chain.transferWrapped(
-          s,
-          mapper.tokenFromDomain(t),
-          cn,
-          mapper.bigNumFromDomain(a),
-          to,
-          mapper.bigNumFromDomain(txFee)
-        );
+        res = chain.transferWrapped(s, t, cn, a, to, txFee);
       } else {
-        res = chain.transferNative(
-          s,
-          mapper.tokenFromDomain(t),
-          cn,
-          mapper.bigNumFromDomain(a),
-          to,
-          mapper.bigNumFromDomain(txFee)
-        );
+        res = chain.transferNative(s, t, cn, a, to, txFee);
       }
 
-      return mapper.txnToDomain(await res);
+      return await res;
     },
   };
 }

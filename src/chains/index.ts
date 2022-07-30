@@ -51,3 +51,57 @@ export type BridgeChainMapper<T, A, Txn, Addr> = {
 export type BridgeChainFactory<P, S, T, A, Txn, Addr> = (
   params: P
 ) => [FullBridgeChain<S, T, A, Txn, Addr>, BridgeChainMapper<T, A, Txn, Addr>];
+
+export type MappedBridgeChain<S> = FullBridgeChain<
+  S,
+  string,
+  BigNumber,
+  string,
+  string
+>;
+
+export function chainMapCombine<S, T, A, Txn, Addr>([chain, mapper]: ReturnType<
+  BridgeChainFactory<any, S, T, A, Txn, Addr>
+>): MappedBridgeChain<S> {
+  return {
+    tokenBalance: (t, a) =>
+      chain
+        .tokenBalance(mapper.tokenFromDomain(t), mapper.addrFromDomain(a))
+        .then(mapper.bigNumToDomain),
+
+    estimateTransferNative: () =>
+      chain.estimateTransferNative().then(mapper.bigNumToDomain),
+
+    estimateTransferWrapped: () =>
+      chain.estimateTransferWrapped().then(mapper.bigNumToDomain),
+
+    preTransfer: (s, t, a) =>
+      chain
+        .preTransfer(s, mapper.tokenFromDomain(t), mapper.bigNumFromDomain(a))
+        .then((t) => t && mapper.txnToDomain(t)),
+
+    transferNative: (s, t, c, a, to, tf) =>
+      chain
+        .transferNative(
+          s,
+          mapper.tokenFromDomain(t),
+          c,
+          mapper.bigNumFromDomain(a),
+          to,
+          mapper.bigNumFromDomain(tf)
+        )
+        .then(mapper.txnToDomain),
+
+    transferWrapped: (s, t, c, a, to, tf) =>
+      chain
+        .transferWrapped(
+          s,
+          mapper.tokenFromDomain(t),
+          c,
+          mapper.bigNumFromDomain(a),
+          to,
+          mapper.bigNumFromDomain(tf)
+        )
+        .then(mapper.txnToDomain),
+  };
+}

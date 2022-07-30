@@ -1,4 +1,5 @@
 import { BridgeChainFactory } from "../chains";
+import { algoBridgeFactory } from "../chains/algo";
 import { evmBridgeFactory } from "../chains/evm";
 
 export const ChainNonce = {
@@ -10,6 +11,8 @@ export const ChainNonce = {
   Mumbai: 0x10003,
   Fantom: 0x4,
   FantomTestNet: 0x10004,
+  Algorand: 0x5,
+  AlgorandTestnet: 0x10005,
 } as const;
 
 export type ChainNonces = typeof ChainNonce[keyof typeof ChainNonce];
@@ -22,6 +25,7 @@ type ChainStaticAssert<T> = T extends {
   : never;
 
 type EvmFactory = typeof evmBridgeFactory;
+type AlgoFactory = typeof algoBridgeFactory;
 
 export type ChainMetaMap = ChainStaticAssert<{
   [ChainNonce.Ethereum]: EvmFactory;
@@ -32,4 +36,6 @@ export type ChainMetaMap = ChainStaticAssert<{
   [ChainNonce.Mumbai]: EvmFactory;
   [ChainNonce.Fantom]: EvmFactory;
   [ChainNonce.FantomTestNet]: EvmFactory;
+  [ChainNonce.Algorand]: AlgoFactory;
+  [ChainNonce.AlgorandTestnet]: AlgoFactory;
 }>;
