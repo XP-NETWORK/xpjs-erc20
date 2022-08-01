@@ -31,7 +31,10 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
       .assetId(assetId)
       .do()
       .then(() => true)
-      .catch(() => false);
+      .catch((err) => {
+        console.log("error", err);
+        return false;
+      });
   }
 
   return {
@@ -53,7 +56,7 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
       // TODO
       return undefined;
     },
-    async transferNative(sender, nativeToken, chainNonce, amt, _to, txFee) {
+    async transferNative(sender, nativeToken, chainNonce, amt, to, txFee) {
       const params = await p.algod.getTransactionParams().do();
 
       let txns: algosdk.Transaction[] = [];
@@ -84,7 +87,6 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
         to: algosdk.getApplicationAddress(p.bridgeId),
         amount: txFee,
       });
-      // TODO: use `to`
       const callTxn = algosdk.makeApplicationNoOpTxnFromObject({
         from: sender.addr,
         suggestedParams: params,
@@ -93,6 +95,7 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
           enc.encode("send_native"),
           algosdk.encodeUint64(amt),
           algosdk.encodeUint64(chainNonce),
+          enc.encode(to),
         ],
       });
       txns.push(asaTxn, payTxn, callTxn);
@@ -105,7 +108,7 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
 
       return callTxn.txID();
     },
-    async transferWrapped(sender, wToken, chainNonce, amt, _to, txFee) {
+    async transferWrapped(sender, wToken, chainNonce, amt, to, txFee) {
       const params = await p.algod.getTransactionParams().do();
 
       const asaTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
@@ -130,6 +133,7 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
           enc.encode("send_wrapped"),
           algosdk.encodeUint64(amt),
           algosdk.encodeUint64(chainNonce),
+          enc.encode(to),
         ],
       });
 

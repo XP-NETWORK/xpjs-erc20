@@ -14,8 +14,8 @@ type ChainInfo = {
   };
 };
 
-const EVM_DECIMALS = new BigNumber(1).exponentiatedBy(18);
-const ALGO_DECIMALS = new BigNumber(1e6);
+const EVM_DECIMALS = new BigNumber(10).exponentiatedBy(18).integerValue();
+const ALGO_DECIMALS = new BigNumber(10).exponentiatedBy(6).integerValue();
 
 export const ChainInfo: ChainInfo = {
   [ChainNonce.Ethereum]: {
