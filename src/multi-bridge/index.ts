@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { ExchangeRateRepo } from "crypto-exchange-rate";
 import { chainMapCombine, MappedBridgeChain } from "../chains";
 import { ScVerifyRepo } from "../external/sc-verify";
 import { ChainInfo } from "./chain-info";
@@ -19,8 +20,8 @@ export type Erc20MultiBridge = {
     addr: string
   ): Promise<BigNumber>;
 
-  estimateFees<R extends ChainNonces>(
-    sourceNonce: number,
+  estimateFees<S extends ChainNonces, R extends ChainNonces>(
+    sourceNonce: S,
     token: string,
     targetNonce: R
   ): Promise<BigNumber>;
@@ -49,6 +50,7 @@ export type MultiBridgeParams = Partial<{
 
 export type MultiBridgeDeps = {
   scVerify: ScVerifyRepo;
+  exchangeRate: ExchangeRateRepo;
 };
 
 type SupBridgeChain<T extends ChainNonces> = MappedBridgeChain<
@@ -111,7 +113,6 @@ export function erc20MultiBridge(
       .eq(val);
   }
 
-  // TODO: proper impl
   const estimateFees: Erc20MultiBridge["estimateFees"] = async (
     sn,
     token,
@@ -124,8 +125,17 @@ export function erc20MultiBridge(
     } else {
       estimator = chain.estimateTransferNative;
     }
+    const estimate = await estimator();
+    const exRate = await d.exchangeRate.getExchangeRate(
+      ChainInfo[sn].currency,
+      ChainInfo[tn].currency
+    );
 
-    return await estimator();
+    return estimate
+      .div(ChainInfo[tn].decimals)
+      .times(exRate * 1.1)
+      .times(ChainInfo[sn].decimals)
+      .integerValue();
   };
 
   return {
