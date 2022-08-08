@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { ExchangeRateRepo } from "crypto-exchange-rate";
 import { chainMapCombine, MappedBridgeChain } from "../chains";
+import { EvNotifer } from "../external/notifier";
 import { ScVerifyRepo } from "../external/sc-verify";
 import { ChainInfo } from "./chain-info";
 import { ChainNonces } from "./meta";
@@ -51,6 +52,7 @@ export type MultiBridgeParams = Partial<{
 export type MultiBridgeDeps = {
   scVerify: ScVerifyRepo;
   exchangeRate: ExchangeRateRepo;
+  notifier: EvNotifer;
 };
 
 type SupBridgeChain<T extends ChainNonces> = MappedBridgeChain<
@@ -168,7 +170,10 @@ export function erc20MultiBridge(
         res = chain.transferNative(s, t, cn, a, to, txFee);
       }
 
-      return await res;
+      const txHash = await res;
+      await d.notifier.notifyValidator(n, txHash);
+
+      return txHash;
     },
   };
 }
