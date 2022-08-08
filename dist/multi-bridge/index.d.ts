@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { ExchangeRateRepo } from "crypto-exchange-rate";
+import { EvNotifer } from "../external/notifier";
 import { ScVerifyRepo } from "../external/sc-verify";
 import { ChainNonces } from "./meta";
 import { InferBridgeChain, InferChainArgs, InferParams } from "./type-utils";
@@ -16,6 +17,7 @@ export declare type MultiBridgeParams = Partial<{
 export declare type MultiBridgeDeps = {
     scVerify: ScVerifyRepo;
     exchangeRate: ExchangeRateRepo;
+    notifier: EvNotifer;
 };
 export declare function erc20MultiBridge(p: MultiBridgeParams, d: MultiBridgeDeps): Erc20MultiBridge;
 //# sourceMappingURL=index.d.ts.map
