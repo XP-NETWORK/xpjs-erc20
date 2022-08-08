@@ -6,7 +6,7 @@ import { BridgeChainMapper } from "..";
 export type EvmBridgeChainMapper = BridgeChainMapper<
   DummyErc20,
   ethers.BigNumber,
-  ethers.ContractTransaction,
+  ethers.ContractReceipt,
   string
 >;
 
@@ -15,7 +15,7 @@ export function evmMapper(
 ): EvmBridgeChainMapper {
   return {
     txnToDomain(txn) {
-      return txn.hash;
+      return txn.transactionHash;
     },
     addrFromDomain(addr) {
       return addr;

@@ -6,7 +6,7 @@ export type EvmBridgeChain = FullBridgeChain<
   Signer,
   DummyErc20,
   ethers.BigNumber,
-  ethers.ContractTransaction,
+  ethers.ContractReceipt,
   string
 >;
 
@@ -29,7 +29,6 @@ export function evmBridgeChain(p: EvmParams): EvmBridgeChain {
     amt: ethers.BigNumber
   ): Promise<ethers.BigNumber> => {
     const allowance = await token.allowance(owner, bridge.address);
-    console.log("allowance", allowance);
     return amt.sub(allowance);
   };
 
@@ -58,17 +57,19 @@ export function evmBridgeChain(p: EvmParams): EvmBridgeChain {
       );
       if (reqd.lte(0)) return undefined;
 
-      return await token.approve(bridge.address, amt);
+      return await token.approve(bridge.address, amt).then((tx) => tx.wait());
     },
     transferNative(sender, nativeToken, chainNonce, amt, to, txFee) {
       return bridge
         .connect(sender)
-        .sendNative(nativeToken.address, amt, chainNonce, to, { value: txFee });
+        .sendNative(nativeToken.address, amt, chainNonce, to, { value: txFee })
+        .then((tx) => tx.wait());
     },
     transferWrapped(sender, wToken, chainNonce, amt, to, txFee) {
       return bridge
         .connect(sender)
-        .sendWrapped(wToken.address, amt, chainNonce, to, { value: txFee });
+        .sendWrapped(wToken.address, amt, chainNonce, to, { value: txFee })
+        .then((tx) => tx.wait());
     },
   };
 }
