@@ -9,6 +9,11 @@ export type EstimateTxFee<A> = {
   estimateTransferWrapped: () => Promise<A>;
 };
 
+export type Erc20TransferChecks<T, Addr> = {
+  preReceiveForeignCheck(token: T, receiver: Addr): Promise<string | undefined>;
+  preReceiveNativeCheck(token: T, receiver: Addr): Promise<string | undefined>;
+};
+
 export type Erc20BridgeChain<S, T, A, Txn> = {
   preTransfer(sender: S, token: T, amt: A): Promise<Txn | undefined>;
 
@@ -38,7 +43,8 @@ export type FullBridgeChain<S, T, A, Txn, Addr> = Erc20BridgeChain<
   Txn
 > &
   EstimateTxFee<A> &
-  Erc20Utils<T, A, Addr>;
+  Erc20Utils<T, A, Addr> &
+  Partial<Erc20TransferChecks<T, Addr>>;
 
 export type BridgeChainMapper<T, A, Txn, Addr> = {
   txnToDomain(txn: Txn): string;
@@ -63,6 +69,22 @@ export type MappedBridgeChain<S> = FullBridgeChain<
 export function chainMapCombine<S, T, A, Txn, Addr>([chain, mapper]: ReturnType<
   BridgeChainFactory<any, S, T, A, Txn, Addr>
 >): MappedBridgeChain<S> {
+  const preReceiveForeignCheck: MappedBridgeChain<S>["preReceiveForeignCheck"] =
+    chain.preReceiveForeignCheck &&
+    ((t, r) =>
+      chain.preReceiveForeignCheck!(
+        mapper.tokenFromDomain(t),
+        mapper.addrFromDomain(r)
+      ));
+
+  const preReceiveNativeCheck: MappedBridgeChain<S>["preReceiveNativeCheck"] =
+    chain.preReceiveNativeCheck &&
+    ((t, r) =>
+      chain.preReceiveNativeCheck!(
+        mapper.tokenFromDomain(t),
+        mapper.addrFromDomain(r)
+      ));
+
   return {
     tokenBalance: (t, a) =>
       chain
@@ -103,5 +125,7 @@ export function chainMapCombine<S, T, A, Txn, Addr>([chain, mapper]: ReturnType<
           mapper.bigNumFromDomain(tf)
         )
         .then(mapper.txnToDomain),
+    preReceiveForeignCheck,
+    preReceiveNativeCheck,
   };
 }

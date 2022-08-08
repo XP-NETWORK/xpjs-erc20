@@ -1,4 +1,4 @@
-import { FullBridgeChain } from "..";
+import { Erc20TransferChecks, FullBridgeChain } from "..";
 import algosdk from "algosdk";
 
 type AlgoSigenr = algosdk.Account;
@@ -9,7 +9,8 @@ export type AlgoBridgeChain = FullBridgeChain<
   bigint,
   string,
   algosdk.Address
->;
+> &
+  Erc20TransferChecks<number, algosdk.Address>;
 
 export type AlgoParams = {
   algod: algosdk.Algodv2;
@@ -25,9 +26,9 @@ const TRANSFER_WRAPPED_COST = BigInt(1);
 const enc = new TextEncoder();
 
 export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
-  function isOptedByBridge(assetId: number) {
+  function isOptedByAddr(assetId: number, addr: string) {
     return p.indexer
-      .lookupAccountAssets(algosdk.getApplicationAddress(p.bridgeId))
+      .lookupAccountAssets(addr)
       .assetId(assetId)
       .do()
       .then(() => true)
@@ -36,6 +37,18 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
         return false;
       });
   }
+
+  function isOptedByBridge(assetId: number) {
+    return isOptedByAddr(assetId, algosdk.getApplicationAddress(p.bridgeId));
+  }
+
+  const preTransferCheck: AlgoBridgeChain["preReceiveForeignCheck"] = async (
+    t,
+    r
+  ) => {
+    const res = await isOptedByAddr(t, algosdk.encodeAddress(r.publicKey));
+    return res ? undefined : `receiver must opt in to asset ${t}`;
+  };
 
   return {
     async tokenBalance(token, address) {
@@ -145,5 +158,7 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
 
       return callTxn.txID();
     },
+    preReceiveForeignCheck: preTransferCheck,
+    preReceiveNativeCheck: preTransferCheck,
   };
 }

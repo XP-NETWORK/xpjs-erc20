@@ -161,16 +161,31 @@ export function erc20MultiBridge(
         );
 
       const chain = getChain(n);
+      const toChain = getChain(cn);
       const txFee = tf || (await estimateFees(n, t, cn));
 
-      let res;
-      if (await isWrappedToken(n, t)) {
-        res = chain.transferWrapped(s, t, cn, a, to, txFee);
+      const tokenPair = await d.scVerify.getTokenPairByWrapped(n, t);
+
+      let transferCheck;
+      let transferFunc;
+      let targetToken;
+      if (tokenPair) {
+        transferFunc = chain.transferWrapped;
+        targetToken = tokenPair.nativeToken;
+        transferCheck = toChain.preReceiveNativeCheck;
       } else {
-        res = chain.transferNative(s, t, cn, a, to, txFee);
+        const wrappedToken = await d.scVerify.getWrappedToken(n, cn, t);
+        if (!wrappedToken) throw Error("Unsupported token");
+
+        targetToken = wrappedToken;
+        transferFunc = chain.transferNative;
+        transferCheck = toChain.preReceiveForeignCheck;
       }
 
-      const txHash = await res;
+      const check = transferCheck && (await transferCheck(targetToken, to));
+      if (check) throw Error(`Cannot transfer to ${to} reason: ${check}`);
+
+      const txHash = await transferFunc(s, t, cn, a, to, txFee);
       await d.notifier.notifyValidator(n, txHash);
 
       return txHash;
