@@ -1,16 +1,21 @@
 import { Erc20TransferChecks, FullBridgeChain } from "..";
 import algosdk from "algosdk";
+import { AlgoSignerH, BrowserSigner } from "./signer";
+import { Base64 } from "js-base64";
 
-type AlgoSigenr = algosdk.Account;
+type AlgoUtils = {
+  algoSignerWrapper: (acc: algosdk.Account) => AlgoSignerH;
+};
 
 export type AlgoBridgeChain = FullBridgeChain<
-  AlgoSigenr,
+  AlgoSignerH,
   number,
   bigint,
   string,
   algosdk.Address
 > &
-  Erc20TransferChecks<number, algosdk.Address>;
+  Erc20TransferChecks<number, algosdk.Address> &
+  AlgoUtils;
 
 export type AlgoParams = {
   algod: algosdk.Algodv2;
@@ -76,7 +81,7 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
 
       if (!(await isOptedByBridge(nativeToken))) {
         const optInAsaTxn = algosdk.makeApplicationNoOpTxnFromObject({
-          from: sender.addr,
+          from: sender.address,
           suggestedParams: params,
           appIndex: p.bridgeId,
           appArgs: [enc.encode("optin_asa")],
@@ -88,20 +93,20 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
       }
 
       const asaTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-        from: sender.addr,
+        from: sender.address,
         suggestedParams: params,
         to: algosdk.getApplicationAddress(p.bridgeId),
         amount: amt,
         assetIndex: nativeToken,
       });
       const payTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: sender.addr,
+        from: sender.address,
         suggestedParams: params,
         to: algosdk.getApplicationAddress(p.bridgeId),
         amount: txFee,
       });
       const callTxn = algosdk.makeApplicationNoOpTxnFromObject({
-        from: sender.addr,
+        from: sender.address,
         suggestedParams: params,
         appIndex: p.bridgeId,
         appArgs: [
@@ -115,9 +120,13 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
 
       algosdk.assignGroupID(txns);
 
-      const sTxns = txns.map((t) => t.signTxn(sender.sk));
+      const sTxns = await sender.algoSigner.signTxn(
+        txns.map((t) => ({ txn: Base64.fromUint8Array(t.toByte()) }))
+      );
 
-      await p.algod.sendRawTransaction(sTxns).do();
+      await p.algod
+        .sendRawTransaction(sTxns.map((s) => Base64.toUint8Array(s.blob)))
+        .do();
 
       return callTxn.txID();
     },
@@ -125,21 +134,21 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
       const params = await p.algod.getTransactionParams().do();
 
       const asaTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-        from: sender.addr,
+        from: sender.address,
         suggestedParams: params,
         to: algosdk.getApplicationAddress(p.bridgeId),
         amount: amt,
         assetIndex: wToken,
       });
       const payTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: sender.addr,
+        from: sender.address,
         suggestedParams: params,
         to: algosdk.getApplicationAddress(p.bridgeId),
         amount: txFee,
       });
 
       const callTxn = algosdk.makeApplicationNoOpTxnFromObject({
-        from: sender.addr,
+        from: sender.address,
         suggestedParams: params,
         appIndex: p.bridgeId,
         appArgs: [
@@ -152,13 +161,53 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
 
       algosdk.assignGroupID([asaTxn, payTxn, callTxn]);
 
-      const sTxns = [asaTxn, payTxn, callTxn].map((t) => t.signTxn(sender.sk));
+      const sTxns = await sender.algoSigner.signTxn(
+        [asaTxn, payTxn, callTxn].map((t) => ({
+          txn: Base64.fromUint8Array(t.toByte()),
+        }))
+      );
 
-      await p.algod.sendRawTransaction(sTxns).do();
+      await p.algod
+        .sendRawTransaction(sTxns.map((s) => Base64.toUint8Array(s.blob)))
+        .do();
 
       return callTxn.txID();
     },
     preReceiveForeignCheck: preTransferCheck,
     preReceiveNativeCheck: preTransferCheck,
+    algoSignerWrapper(acc): AlgoSignerH {
+      const signer: BrowserSigner = {
+        accounts(_) {
+          return Promise.resolve([
+            {
+              address: acc.addr,
+            },
+          ]);
+        },
+        signTxn(txns) {
+          return Promise.resolve(
+            txns.map((t) => {
+              const signed = algosdk.signTransaction(
+                algosdk.decodeUnsignedTransaction(Base64.toUint8Array(t.txn)),
+                acc.sk
+              );
+              return {
+                txID: signed.txID,
+                blob: Base64.fromUint8Array(signed.blob),
+              };
+            })
+          );
+        },
+        send({ tx }) {
+          return p.algod.sendRawTransaction(Base64.toUint8Array(tx)).do();
+        },
+      };
+
+      return {
+        algoSigner: signer,
+        address: acc.addr,
+        ledger: "any",
+      };
+    },
   };
 }
