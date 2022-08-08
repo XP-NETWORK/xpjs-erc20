@@ -1,7 +1,10 @@
 import { Erc20TransferChecks, FullBridgeChain } from "..";
 import algosdk from "algosdk";
-declare type AlgoSigenr = algosdk.Account;
-export declare type AlgoBridgeChain = FullBridgeChain<AlgoSigenr, number, bigint, string, algosdk.Address> & Erc20TransferChecks<number, algosdk.Address>;
+import { AlgoSignerH } from "./signer";
+declare type AlgoUtils = {
+    algoSignerWrapper: (acc: algosdk.Account) => AlgoSignerH;
+};
+export declare type AlgoBridgeChain = FullBridgeChain<AlgoSignerH, number, bigint, string, algosdk.Address> & Erc20TransferChecks<number, algosdk.Address> & AlgoUtils;
 export declare type AlgoParams = {
     algod: algosdk.Algodv2;
     indexer: algosdk.Indexer;

@@ -9,6 +9,7 @@
     "bignumber.js": "^9.0.2",
     "crypto-exchange-rate": "git+https://github.com/XP-NETWORK/exchange-rate#5687d35eba73b03a3b29b834107a94646577c8a6",
     "ethers": "^5.6.9",
+    "js-base64": "^3.7.2",
     "web3-erc20-contracts-types": "git+https://github.com/XP-NETWORK/web3-erc20-contracts-types#f85932dc67e9b05d7a0742dc76914ac0d2376e2b"
   },
   "scripts": {
