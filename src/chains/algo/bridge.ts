@@ -18,9 +18,9 @@ export type AlgoParams = {
 };
 
 // TODO
-const TRANSFER_NATIVE_COST = BigInt(0);
+const TRANSFER_NATIVE_COST = BigInt(1);
 // TODO
-const TRANSFER_WRAPPED_COST = BigInt(0);
+const TRANSFER_WRAPPED_COST = BigInt(1);
 
 const enc = new TextEncoder();
 

@@ -16,9 +16,9 @@ export type EvmParams = {
 };
 
 // TODO
-const TRANSFER_NATIVE_COST = ethers.BigNumber.from(0);
+const TRANSFER_NATIVE_COST = ethers.BigNumber.from(100000);
 // TODO
-const TRANSFER_WRAPPED_COST = ethers.BigNumber.from(0);
+const TRANSFER_WRAPPED_COST = ethers.BigNumber.from(100000);
 
 export function evmBridgeChain(p: EvmParams): EvmBridgeChain {
   const bridge = Bridge__factory.connect(p.bridgeAddr, p.provider);
@@ -29,6 +29,7 @@ export function evmBridgeChain(p: EvmParams): EvmBridgeChain {
     amt: ethers.BigNumber
   ): Promise<ethers.BigNumber> => {
     const allowance = await token.allowance(owner, bridge.address);
+    console.log("allowance", allowance);
     return amt.sub(allowance);
   };
 
