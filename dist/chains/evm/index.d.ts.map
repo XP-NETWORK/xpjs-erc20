@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../src/chains/evm/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAkB,cAAc,EAAE,SAAS,EAAE,MAAM,UAAU,CAAC;AACrE,OAAO,EAAE,oBAAoB,EAAa,MAAM,UAAU,CAAC;AAE3D,oBAAY,SAAS,GAAG,CAAC,cAAc,EAAE,oBAAoB,CAAC,CAAC;AAE/D,wBAAgB,gBAAgB,CAAC,CAAC,EAAE,SAAS,GAAG,SAAS,CAExD"}
