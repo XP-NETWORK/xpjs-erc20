@@ -127,8 +127,8 @@ export function erc20MultiBridge(
     }
     const estimate = await estimator();
     const exRate = await d.exchangeRate.getExchangeRate(
-      ChainInfo[sn].currency,
-      ChainInfo[tn].currency
+      ChainInfo[tn].currency,
+      ChainInfo[sn].currency
     );
 
     return estimate
