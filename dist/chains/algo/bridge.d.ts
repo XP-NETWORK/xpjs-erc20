@@ -3,6 +3,7 @@ import algosdk from "algosdk";
 import { AlgoSignerH } from "./signer";
 declare type AlgoUtils = {
     algoSignerWrapper: (acc: algosdk.Account) => AlgoSignerH;
+    optInAsa: (acc: AlgoSignerH, asaId: number) => Promise<string | undefined>;
 };
 export declare type AlgoBridgeChain = FullBridgeChain<AlgoSignerH, number, bigint, string, algosdk.Address> & Erc20TransferChecks<number, algosdk.Address> & AlgoUtils;
 export declare type AlgoParams = {
