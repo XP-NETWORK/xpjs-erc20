@@ -5,6 +5,7 @@ import { Base64 } from "js-base64";
 
 type AlgoUtils = {
   algoSignerWrapper: (acc: algosdk.Account) => AlgoSignerH;
+  optInAsa: (acc: AlgoSignerH, asaId: number) => Promise<string | undefined>;
 };
 
 export type AlgoBridgeChain = FullBridgeChain<
@@ -208,6 +209,29 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
         address: acc.addr,
         ledger: "any",
       };
+    },
+    async optInAsa(signer, asaId) {
+      if (await isOptedByAddr(asaId, signer.address)) {
+        return undefined;
+      }
+
+      const suggestedParams = await p.algod.getTransactionParams().do();
+      const optInTx = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject(
+        {
+          from: signer.address,
+          to: signer.address,
+          amount: 0,
+          assetIndex: asaId,
+          suggestedParams,
+        }
+      );
+      const sTx = await signer.algoSigner.signTxn([
+        { txn: Base64.fromUint8Array(optInTx.toByte()) },
+      ]);
+
+      await p.algod.sendRawTransaction(Base64.toUint8Array(sTx[0].blob)).do();
+
+      return optInTx.txID();
     },
   };
 }
