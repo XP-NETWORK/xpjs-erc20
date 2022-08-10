@@ -17,6 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChainNonce = exports.ChainInfo = void 0;
 __exportStar(require("./chains"), exports);
 __exportStar(require("./chains/evm"), exports);
+__exportStar(require("./chains/algo"), exports);
 __exportStar(require("./external/sc-verify"), exports);
 __exportStar(require("./external/exchange-rate"), exports);
 __exportStar(require("./external/notifier"), exports);
@@ -26,4 +27,4 @@ var chain_info_1 = require("./multi-bridge/chain-info");
 Object.defineProperty(exports, "ChainInfo", { enumerable: true, get: function () { return chain_info_1.ChainInfo; } });
 var meta_1 = require("./multi-bridge/meta");
 Object.defineProperty(exports, "ChainNonce", { enumerable: true, get: function () { return meta_1.ChainNonce; } });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9zcmMvaW5kZXgudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSwyQ0FBeUI7QUFDekIsK0NBQTZCO0FBQzdCLHVEQUFxQztBQUNyQywyREFBeUM7QUFDekMsc0RBQW9DO0FBQ3BDLGtEQUFnQztBQUNoQyxpREFBK0I7QUFDL0Isd0RBQXNEO0FBQTdDLHVHQUFBLFNBQVMsT0FBQTtBQUNsQiw0Q0FBaUQ7QUFBeEMsa0dBQUEsVUFBVSxPQUFBIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9zcmMvaW5kZXgudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSwyQ0FBeUI7QUFDekIsK0NBQTZCO0FBQzdCLGdEQUE4QjtBQUM5Qix1REFBcUM7QUFDckMsMkRBQXlDO0FBQ3pDLHNEQUFvQztBQUNwQyxrREFBZ0M7QUFDaEMsaURBQStCO0FBQy9CLHdEQUFzRDtBQUE3Qyx1R0FBQSxTQUFTLE9BQUE7QUFDbEIsNENBQWlEO0FBQXhDLGtHQUFBLFVBQVUsT0FBQSJ9
