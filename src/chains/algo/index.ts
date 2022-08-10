@@ -1,6 +1,10 @@
 import { algoBridgeChain, AlgoBridgeChain, AlgoParams } from "./bridge";
 import { AlgoBridgeChainMapper, algoMapper } from "./mapper";
-export { AlgoSignerH, typedAlgoSigner } from "./signer";
+export {
+  AlgoSignerH,
+  BrowserSigner as AlgoBrowserSigner,
+  typedAlgoSigner,
+} from "./signer";
 
 export type AlgoBridge = [AlgoBridgeChain, AlgoBridgeChainMapper];
 

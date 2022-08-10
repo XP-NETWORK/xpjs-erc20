@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { ExchangeRateRepo } from "crypto-exchange-rate";
-import { chainMapCombine, MappedBridgeChain } from "../chains";
+import { chainMapCombine, ErrData, MappedBridgeChain } from "../chains";
 import { EvNotifer } from "../external/notifier";
 import { ScVerifyRepo } from "../external/sc-verify";
 import { ChainInfo } from "./chain-info";
@@ -11,6 +11,16 @@ import {
   InferChainMeta,
   InferParams,
 } from "./type-utils";
+
+export class TransferError<T> extends Error {
+  public readonly data: T;
+
+  constructor(e: ErrData<T>) {
+    super(e.reason);
+    this.name = "TransferError";
+    this.data = e.data;
+  }
+}
 
 export type Erc20MultiBridge = {
   inner<T extends ChainNonces>(nonce: T): Promise<InferBridgeChain<T>>;
@@ -183,7 +193,7 @@ export function erc20MultiBridge(
       }
 
       const check = transferCheck && (await transferCheck(targetToken, to));
-      if (check) throw Error(`Cannot transfer to ${to} reason: ${check}`);
+      if (check) throw new TransferError(check);
 
       const txHash = await transferFunc(s, t, cn, a, to, txFee);
       await d.notifier.notifyValidator(n, txHash);

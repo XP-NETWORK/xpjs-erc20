@@ -1,8 +1,4 @@
-import {
-  BridgeChainMapper,
-  Erc20BridgeChain,
-  FullBridgeChain,
-} from "../chains";
+import { FullBridgeChain } from "../chains";
 import { ChainMetaMap, ChainNonces } from "./meta";
 
 export type InferChainMeta<T extends ChainNonces> = ReturnType<ChainMetaMap[T]>;

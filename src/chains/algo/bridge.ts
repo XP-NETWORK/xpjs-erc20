@@ -17,7 +17,7 @@ export type AlgoBridgeChain = FullBridgeChain<
   string,
   algosdk.Address
 > &
-  Erc20TransferChecks<number, algosdk.Address> &
+  Erc20TransferChecks<number, algosdk.Address, number> &
   AlgoUtils;
 
 export type AlgoParams = {
@@ -55,7 +55,9 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
     r
   ) => {
     const res = await isOptedByAddr(t, algosdk.encodeAddress(r.publicKey));
-    return res ? undefined : `receiver must opt in to asset ${t}`;
+    return res
+      ? undefined
+      : { reason: `receiver must opt in to asset ${t}`, data: t };
   };
 
   return {
