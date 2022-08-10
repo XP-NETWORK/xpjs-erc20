@@ -39,7 +39,9 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
       .lookupAccountAssets(addr)
       .assetId(assetId)
       .do()
-      .then(() => true)
+      .then((d) => {
+        return d.assets.length > 0;
+      })
       .catch((err) => {
         console.log("error", err);
         return false;
