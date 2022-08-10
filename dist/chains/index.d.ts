@@ -6,16 +6,20 @@ export declare type EstimateTxFee<A> = {
     estimateTransferNative: () => Promise<A>;
     estimateTransferWrapped: () => Promise<A>;
 };
-export declare type Erc20TransferChecks<T, Addr> = {
-    preReceiveForeignCheck(token: T, receiver: Addr): Promise<string | undefined>;
-    preReceiveNativeCheck(token: T, receiver: Addr): Promise<string | undefined>;
+export declare type ErrData<T> = {
+    reason: string;
+    data: T;
+};
+export declare type Erc20TransferChecks<T, Addr, E> = {
+    preReceiveForeignCheck(token: T, receiver: Addr): Promise<ErrData<E> | undefined>;
+    preReceiveNativeCheck(token: T, receiver: Addr): Promise<ErrData<E> | undefined>;
 };
 export declare type Erc20BridgeChain<S, T, A, Txn> = {
     preTransfer(sender: S, token: T, amt: A): Promise<Txn | undefined>;
     transferNative(sender: S, nativeToken: T, chainNonce: number, amt: A, to: string, txFee: A): Promise<Txn>;
     transferWrapped(sender: S, wToken: T, chainNonce: number, amt: A, to: string, txFee: A): Promise<Txn>;
 };
-export declare type FullBridgeChain<S, T, A, Txn, Addr> = Erc20BridgeChain<S, T, A, Txn> & EstimateTxFee<A> & Erc20Utils<T, A, Addr> & Partial<Erc20TransferChecks<T, Addr>>;
+export declare type FullBridgeChain<S, T, A, Txn, Addr, E = unknown> = Erc20BridgeChain<S, T, A, Txn> & EstimateTxFee<A> & Erc20Utils<T, A, Addr> & Partial<Erc20TransferChecks<T, Addr, E>>;
 export declare type BridgeChainMapper<T, A, Txn, Addr> = {
     txnToDomain(txn: Txn): string;
     addrFromDomain(addr: string): Addr;

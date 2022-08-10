@@ -7,7 +7,7 @@ declare type AlgoUtils = {
     myAlgoSignerWrapper: (acc: MyAlgoConnect, address: string) => AlgoSignerH;
     optInAsa: (acc: AlgoSignerH, asaId: number) => Promise<string | undefined>;
 };
-export declare type AlgoBridgeChain = FullBridgeChain<AlgoSignerH, number, bigint, string, algosdk.Address> & Erc20TransferChecks<number, algosdk.Address> & AlgoUtils;
+export declare type AlgoBridgeChain = FullBridgeChain<AlgoSignerH, number, bigint, string, algosdk.Address> & Erc20TransferChecks<number, algosdk.Address, number> & AlgoUtils;
 export declare type AlgoParams = {
     algod: algosdk.Algodv2;
     indexer: algosdk.Indexer;
