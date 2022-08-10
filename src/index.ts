@@ -1,5 +1,6 @@
 export * from "./chains";
 export * from "./chains/evm";
+export * from "./chains/algo";
 export * from "./external/sc-verify";
 export * from "./external/exchange-rate";
 export * from "./external/notifier";
