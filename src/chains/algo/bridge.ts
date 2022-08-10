@@ -1,10 +1,12 @@
 import { Erc20TransferChecks, FullBridgeChain } from "..";
 import algosdk from "algosdk";
-import { AlgoSignerH, BrowserSigner } from "./signer";
+import { AlgoSignerH, BrowserSigner, TxResp } from "./signer";
 import { Base64 } from "js-base64";
+import MyAlgoConnect from "@randlabs/myalgo-connect";
 
 type AlgoUtils = {
   algoSignerWrapper: (acc: algosdk.Account) => AlgoSignerH;
+  myAlgoSignerWrapper: (acc: MyAlgoConnect, address: string) => AlgoSignerH;
   optInAsa: (acc: AlgoSignerH, asaId: number) => Promise<string | undefined>;
 };
 
@@ -232,6 +234,30 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
       await p.algod.sendRawTransaction(Base64.toUint8Array(sTx[0].blob)).do();
 
       return optInTx.txID();
+    },
+    myAlgoSignerWrapper(acc, address) {
+      const signer: BrowserSigner = {
+        async accounts(_) {
+          const accs = await acc.connect();
+          return accs;
+        },
+        async signTxn(txns) {
+          const stxs = await acc.signTransaction(txns.map(({ txn }) => txn));
+          return stxs.map((tx) => ({
+            txID: tx.txID,
+            blob: Base64.fromUint8Array(tx.blob),
+          }));
+        },
+        send(info: { tx: string }): Promise<TxResp> {
+          return p.algod.sendRawTransaction(Base64.toUint8Array(info.tx)).do();
+        },
+      };
+
+      return {
+        algoSigner: signer,
+        address,
+        ledger: "any",
+      };
     },
   };
 }
