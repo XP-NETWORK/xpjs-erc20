@@ -31,6 +31,8 @@ export type Erc20MultiBridge = {
     addr: string
   ): Promise<BigNumber>;
 
+  tokenParams<T extends ChainNonces>(nonce: T, token: string): Promise<any>;
+
   estimateFees<S extends ChainNonces, R extends ChainNonces>(
     sourceNonce: S,
     token: string,
@@ -155,6 +157,10 @@ export function erc20MultiBridge(
     tokenBalance: async (n, token, addr) => {
       const chain = getChain(n);
       return await chain.tokenBalance(token, addr);
+    },
+    tokenParams: async (n, token) => {
+      const chain = getChain(n);
+      return await chain.tokenParams(token);
     },
     estimateFees,
     async preTransfer(n, s, t, a) {

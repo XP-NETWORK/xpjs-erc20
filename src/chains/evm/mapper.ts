@@ -29,5 +29,8 @@ export function evmMapper(
     bigNumFromDomain(bign) {
       return ethers.BigNumber.from(bign.toString(10));
     },
+    default(p) {
+      return p;
+    },
   };
 }

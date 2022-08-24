@@ -16,5 +16,6 @@ export function algoMapper(): AlgoBridgeChainMapper {
     tokenFromDomain: (t) => parseInt(t),
     bigNumFromDomain: (b) => BigInt(b.toString(10)),
     bigNumToDomain: (b) => new BigNumber(b.toString()),
+    default: (p) => p,
   };
 }

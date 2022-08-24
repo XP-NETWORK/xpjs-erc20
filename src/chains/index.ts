@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 
 export type Erc20Utils<T, A, Addr> = {
   tokenBalance(token: T, address: Addr): Promise<A>;
-  tokenParams(token: T): Promise<any>;
+  tokenParams?: (token: T) => Promise<any>;
 };
 
 export type EstimateTxFee<A> = {
@@ -64,6 +64,7 @@ export type BridgeChainMapper<T, A, Txn, Addr> = {
   tokenFromDomain(token: string): T;
   bigNumToDomain(bign: A): BigNumber;
   bigNumFromDomain(bign: BigNumber): A;
+  default(p: any): any;
 };
 
 export type BridgeChainFactory<P, S, T, A, Txn, Addr> = (
@@ -103,7 +104,7 @@ export function chainMapCombine<S, T, A, Txn, Addr>([chain, mapper]: ReturnType<
         .tokenBalance(mapper.tokenFromDomain(t), mapper.addrFromDomain(a))
         .then(mapper.bigNumToDomain),
     tokenParams: (t) =>
-      chain.tokenParams(mapper.tokenFromDomain(t)).then(mapper.bigNumToDomain),
+      chain.tokenParams(mapper.tokenFromDomain(t)).then(mapper.default),
     estimateTransferNative: () =>
       chain.estimateTransferNative().then(mapper.bigNumToDomain),
 

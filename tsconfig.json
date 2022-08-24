@@ -3,6 +3,7 @@
     "incremental": false,
     "target": "es2017",
     "outDir": "./dist",
+    //"outDir": "../erc20-bridge-ui/node_modules/xpjs-erc20/dist",
     "rootDir": "src",
     "moduleResolution": "node",
     "module": "commonjs",
