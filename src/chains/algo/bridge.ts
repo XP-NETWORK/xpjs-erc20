@@ -69,7 +69,16 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
         .assetId(token)
         .do()
         .catch(() => ({ assets: [{ amount: 0 }] }));
+
       return BigInt(res.assets[0].amount);
+    },
+    async tokenParams(token: number) {
+      const res = await p.indexer
+        .lookupAssetByID(token)
+        .do()
+        .catch(() => ({ asset: { params: {} } }));
+
+      return res.asset.params;
     },
     estimateTransferNative() {
       return Promise.resolve(TRANSFER_NATIVE_COST);
