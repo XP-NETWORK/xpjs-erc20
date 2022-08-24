@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 export declare type Erc20Utils<T, A, Addr> = {
     tokenBalance(token: T, address: Addr): Promise<A>;
+    tokenParams(token: T): Promise<any>;
 };
 export declare type EstimateTxFee<A> = {
     estimateTransferNative: () => Promise<A>;
