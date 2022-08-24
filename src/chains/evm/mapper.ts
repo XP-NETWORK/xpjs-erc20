@@ -20,6 +20,9 @@ export function evmMapper(
     addrFromDomain(addr) {
       return addr;
     },
+    accountFromDomain(acc) {
+      return acc;
+    },
     tokenFromDomain(token) {
       return DummyErc20__factory.connect(token, provider);
     },

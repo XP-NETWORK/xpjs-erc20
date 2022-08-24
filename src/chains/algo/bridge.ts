@@ -63,6 +63,15 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
   };
 
   return {
+    async balance(address: string) {
+      const res = await p.algod
+        .accountInformation(address)
+        .do()
+        .catch(() => undefined);
+      if (!res) return BigInt(0);
+
+      return BigInt(res.amount);
+    },
     async tokenBalance(token, address) {
       const res = await p.indexer
         .lookupAccountAssets(algosdk.encodeAddress(address.publicKey))
@@ -72,7 +81,7 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
 
       return BigInt(res.assets[0].amount);
     },
-    async tokenParams(token: number) {
+    async tokenParams(token) {
       const res = await p.indexer
         .lookupAssetByID(token)
         .do()

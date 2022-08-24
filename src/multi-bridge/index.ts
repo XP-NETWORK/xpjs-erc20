@@ -25,6 +25,8 @@ export class TransferError<T> extends Error {
 export type Erc20MultiBridge = {
   inner<T extends ChainNonces>(nonce: T): Promise<InferBridgeChain<T>>;
 
+  balance<T extends ChainNonces>(nonce: T, addr: string): Promise<BigNumber>;
+
   tokenBalance<T extends ChainNonces>(
     nonce: T,
     token: string,
@@ -154,6 +156,10 @@ export function erc20MultiBridge(
 
   return {
     inner: <T extends ChainNonces>(n: T) => Promise.resolve(inner(n)[0]),
+    balance: async (n, addr) => {
+      const chain = getChain(n);
+      return await chain.balance(addr);
+    },
     tokenBalance: async (n, token, addr) => {
       const chain = getChain(n);
       return await chain.tokenBalance(token, addr);

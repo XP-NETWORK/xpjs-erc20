@@ -13,6 +13,9 @@ export function algoMapper(): AlgoBridgeChainMapper {
   return {
     txnToDomain: (s) => s,
     addrFromDomain: (a) => algosdk.decodeAddress(a),
+    accountFromDomain(acc) {
+      return acc;
+    },
     tokenFromDomain: (t) => parseInt(t),
     bigNumFromDomain: (b) => BigInt(b.toString(10)),
     bigNumToDomain: (b) => new BigNumber(b.toString()),

@@ -1,4 +1,4 @@
-import { ethers, Signer } from "ethers";
+import { ethers, Signer, BigNumber } from "ethers";
 import { FullBridgeChain } from "..";
 import { Bridge__factory, DummyErc20 } from "web3-erc20-contracts-types";
 
@@ -39,10 +39,15 @@ export function evmBridgeChain(p: EvmParams): EvmBridgeChain {
   }
 
   return {
+    async balance(address) {
+      return await p.provider.getBalance(address);
+    },
     tokenBalance(token, address) {
       return token.connect(p.provider).balanceOf(address);
     },
-
+    async tokenParams(token) {
+      return {};
+    },
     estimateTransferNative() {
       return estimateFee(TRANSFER_NATIVE_COST);
     },
