@@ -11,7 +11,9 @@ export declare class TransferError<T> extends Error {
 }
 export declare type Erc20MultiBridge = {
     inner<T extends ChainNonces>(nonce: T): Promise<InferBridgeChain<T>>;
+    balance<T extends ChainNonces>(nonce: T, addr: string): Promise<BigNumber>;
     tokenBalance<T extends ChainNonces>(nonce: T, token: string, addr: string): Promise<BigNumber>;
+    tokenParams<T extends ChainNonces>(nonce: T, token: string): Promise<any>;
     estimateFees<S extends ChainNonces, R extends ChainNonces>(sourceNonce: S, token: string, targetNonce: R): Promise<BigNumber>;
     preTransfer<T extends ChainNonces>(nonce: T, sender: InferChainArgs<T>[0], token: string, amt: BigNumber): Promise<string | undefined>;
     transferTokens<T extends ChainNonces, R extends ChainNonces>(nonce: T, sender: InferChainArgs<T>[0], token: string, chainNonce: R, amt: BigNumber, to: string, txFee?: BigNumber): Promise<string>;

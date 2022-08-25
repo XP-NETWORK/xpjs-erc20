@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 export declare type Erc20Utils<T, A, Addr> = {
+    balance(address: string): Promise<A>;
     tokenBalance(token: T, address: Addr): Promise<A>;
     tokenParams(token: T): Promise<any>;
 };
@@ -24,9 +25,11 @@ export declare type FullBridgeChain<S, T, A, Txn, Addr, E = unknown> = Erc20Brid
 export declare type BridgeChainMapper<T, A, Txn, Addr> = {
     txnToDomain(txn: Txn): string;
     addrFromDomain(addr: string): Addr;
+    accountFromDomain(acc: string): string;
     tokenFromDomain(token: string): T;
     bigNumToDomain(bign: A): BigNumber;
     bigNumFromDomain(bign: BigNumber): A;
+    default(p: any): any;
 };
 export declare type BridgeChainFactory<P, S, T, A, Txn, Addr> = (params: P) => [FullBridgeChain<S, T, A, Txn, Addr>, BridgeChainMapper<T, A, Txn, Addr>];
 export declare type MappedBridgeChain<S> = FullBridgeChain<S, string, BigNumber, string, string>;
