@@ -11,6 +11,8 @@ type ChainInfo = {
     factory: ChainMetaMap[K];
     currency: SupportedCurrency;
     blockExplorer: string;
+    addrExplorer: string;
+    txExplorer: string;
   };
 };
 
@@ -25,6 +27,8 @@ export const ChainInfo: ChainInfo = {
     currency: SupportedCurrency.ETH,
     // TODO
     blockExplorer: "",
+    addrExplorer: "",
+    txExplorer: "",
   },
   [ChainNonce.Ropsten]: {
     name: "Ropsten",
@@ -33,6 +37,8 @@ export const ChainInfo: ChainInfo = {
     currency: SupportedCurrency.ETH,
     // TODO
     blockExplorer: "",
+    addrExplorer: "",
+    txExplorer: "",
   },
   [ChainNonce.BSC]: {
     name: "BSC",
@@ -41,6 +47,8 @@ export const ChainInfo: ChainInfo = {
     currency: SupportedCurrency.BNB,
     // TODO
     blockExplorer: "",
+    addrExplorer: "https://bscscan.com/address/",
+    txExplorer: "https://bscscan.com/tx/",
   },
   [ChainNonce.BSCTestNet]: {
     name: "BSC TestNet",
@@ -49,6 +57,8 @@ export const ChainInfo: ChainInfo = {
     currency: SupportedCurrency.BNB,
     // TODO
     blockExplorer: "",
+    addrExplorer: "",
+    txExplorer: "",
   },
   [ChainNonce.Polygon]: {
     name: "Polygon",
@@ -57,6 +67,8 @@ export const ChainInfo: ChainInfo = {
     currency: SupportedCurrency.MATIC,
     // TODO
     blockExplorer: "",
+    addrExplorer: "",
+    txExplorer: "",
   },
   [ChainNonce.Mumbai]: {
     name: "Mumbai",
@@ -65,6 +77,8 @@ export const ChainInfo: ChainInfo = {
     currency: SupportedCurrency.MATIC,
     // TODO
     blockExplorer: "",
+    addrExplorer: "",
+    txExplorer: "",
   },
   [ChainNonce.Fantom]: {
     name: "Fantom",
@@ -73,6 +87,8 @@ export const ChainInfo: ChainInfo = {
     currency: SupportedCurrency.FTM,
     // TODO
     blockExplorer: "",
+    addrExplorer: "",
+    txExplorer: "",
   },
   [ChainNonce.FantomTestNet]: {
     name: "Fantom TestNet",
@@ -81,6 +97,8 @@ export const ChainInfo: ChainInfo = {
     currency: SupportedCurrency.FTM,
     // TODO
     blockExplorer: "",
+    addrExplorer: "",
+    txExplorer: "",
   },
   [ChainNonce.Algorand]: {
     name: "Algorand",
@@ -89,6 +107,8 @@ export const ChainInfo: ChainInfo = {
     currency: SupportedCurrency.ALGO,
     // TODO
     blockExplorer: "",
+    addrExplorer: "https://algoexplorer.io/address/",
+    txExplorer: "https://algoexplorer.io/tx/",
   },
   [ChainNonce.AlgorandTestnet]: {
     name: "Algorand TestNet",
@@ -97,5 +117,7 @@ export const ChainInfo: ChainInfo = {
     currency: SupportedCurrency.ALGO,
     // TODO
     blockExplorer: "",
+    addrExplorer: "",
+    txExplorer: "",
   },
 };
