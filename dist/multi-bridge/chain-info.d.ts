@@ -8,6 +8,9 @@ declare type ChainInfo = {
         factory: ChainMetaMap[K];
         currency: SupportedCurrency;
         blockExplorer: string;
+        addrExplorer: string;
+        txExplorer: string;
+        xpnetToken: string;
     };
 };
 export declare const ChainInfo: ChainInfo;
