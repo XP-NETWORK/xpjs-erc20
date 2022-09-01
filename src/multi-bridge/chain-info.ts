@@ -13,6 +13,7 @@ type ChainInfo = {
     blockExplorer: string;
     addrExplorer: string;
     txExplorer: string;
+    xpnetToken: string;
   };
 };
 
@@ -29,6 +30,7 @@ export const ChainInfo: ChainInfo = {
     blockExplorer: "",
     addrExplorer: "",
     txExplorer: "",
+    xpnetToken: "",
   },
   [ChainNonce.Ropsten]: {
     name: "Ropsten",
@@ -39,6 +41,7 @@ export const ChainInfo: ChainInfo = {
     blockExplorer: "",
     addrExplorer: "",
     txExplorer: "",
+    xpnetToken: "",
   },
   [ChainNonce.BSC]: {
     name: "BSC",
@@ -49,6 +52,7 @@ export const ChainInfo: ChainInfo = {
     blockExplorer: "",
     addrExplorer: "https://bscscan.com/address/",
     txExplorer: "https://bscscan.com/tx/",
+    xpnetToken: "0x8cf8238abf7b933Bf8BB5Ea2C7E4Be101c11de2A",
   },
   [ChainNonce.BSCTestNet]: {
     name: "BSC TestNet",
@@ -59,6 +63,7 @@ export const ChainInfo: ChainInfo = {
     blockExplorer: "",
     addrExplorer: "",
     txExplorer: "",
+    xpnetToken: "",
   },
   [ChainNonce.Polygon]: {
     name: "Polygon",
@@ -69,6 +74,7 @@ export const ChainInfo: ChainInfo = {
     blockExplorer: "",
     addrExplorer: "",
     txExplorer: "",
+    xpnetToken: "",
   },
   [ChainNonce.Mumbai]: {
     name: "Mumbai",
@@ -79,6 +85,7 @@ export const ChainInfo: ChainInfo = {
     blockExplorer: "",
     addrExplorer: "",
     txExplorer: "",
+    xpnetToken: "",
   },
   [ChainNonce.Fantom]: {
     name: "Fantom",
@@ -89,6 +96,7 @@ export const ChainInfo: ChainInfo = {
     blockExplorer: "",
     addrExplorer: "",
     txExplorer: "",
+    xpnetToken: "",
   },
   [ChainNonce.FantomTestNet]: {
     name: "Fantom TestNet",
@@ -99,6 +107,7 @@ export const ChainInfo: ChainInfo = {
     blockExplorer: "",
     addrExplorer: "",
     txExplorer: "",
+    xpnetToken: "",
   },
   [ChainNonce.Algorand]: {
     name: "Algorand",
@@ -109,6 +118,7 @@ export const ChainInfo: ChainInfo = {
     blockExplorer: "",
     addrExplorer: "https://algoexplorer.io/address/",
     txExplorer: "https://algoexplorer.io/tx/",
+    xpnetToken: "855071472",
   },
   [ChainNonce.AlgorandTestnet]: {
     name: "Algorand TestNet",
@@ -119,5 +129,6 @@ export const ChainInfo: ChainInfo = {
     blockExplorer: "",
     addrExplorer: "",
     txExplorer: "",
+    xpnetToken: "",
   },
 };
