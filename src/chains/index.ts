@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 export type Erc20Utils<T, A, Addr> = {
   balance(address: string): Promise<A>;
   tokenBalance(token: T, address: Addr): Promise<A>;
-  tokenParams(token: T): Promise<any>;
+  tokenParams(token: T): Promise<{ symbol: string }>;
 };
 
 export type EstimateTxFee<A> = {

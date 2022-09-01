@@ -87,7 +87,9 @@ export function algoBridgeChain(p: AlgoParams): AlgoBridgeChain {
         .do()
         .catch(() => ({ asset: { params: {} } }));
 
-      return res.asset.params;
+      return {
+        symbol: res?.asset?.params?.name,
+      };
     },
     estimateTransferNative() {
       return Promise.resolve(TRANSFER_NATIVE_COST);

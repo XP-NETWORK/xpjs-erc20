@@ -33,7 +33,12 @@ export type Erc20MultiBridge = {
     addr: string
   ): Promise<BigNumber>;
 
-  tokenParams<T extends ChainNonces>(nonce: T, token: string): Promise<any>;
+  tokenParams<T extends ChainNonces>(
+    nonce: T,
+    token: string
+  ): Promise<{
+    symbol: string;
+  }>;
 
   estimateFees<S extends ChainNonces, R extends ChainNonces>(
     sourceNonce: S,

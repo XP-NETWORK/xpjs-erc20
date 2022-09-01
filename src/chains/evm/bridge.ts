@@ -46,7 +46,8 @@ export function evmBridgeChain(p: EvmParams): EvmBridgeChain {
       return token.connect(p.provider).balanceOf(address);
     },
     async tokenParams(token) {
-      return {};
+      const symbol = await token.connect(p.provider).symbol();
+      return { symbol };
     },
     estimateTransferNative() {
       return estimateFee(TRANSFER_NATIVE_COST);
